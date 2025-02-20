@@ -28,6 +28,7 @@ jobs:
           start-cli init
           npm i
           npm run build
+          docker pull ghcr.io/start9labs/btc-rpc-proxy
           echo '-------------------'
           docker run --privileged --rm tonistiigi/binfmt --install all
           docker buildx create --use
