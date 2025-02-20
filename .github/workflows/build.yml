@@ -29,11 +29,16 @@ jobs:
           npm i
           npm run build
           echo '-------------------'
-          which docker
+          docker run --privileged --rm tonistiigi/binfmt --install all
+          docker buildx create --use
           make
-          ls -lha
-          PACKAGE_ID=$(sed -n -r -e 's/PACKAGE_ID := (.+)/\1/ p' Makefile)
-          echo "package_id=$PACKAGE_ID" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Setting package ID and title from the manifest
+        id: package
+        run: |
+          # echo "package_id=$(sed -n -r -e "s/\s*id\s*: '(.+)',/\1/ p" startos/manifest.ts) >> $GITHUB_ENV
+          echo "package_title=$(sed -n -r -e "s/\s*title\s*: '(.+)',/\1/ p" startos/manifest.ts)" >> $GITHUB_ENV
         shell: bash
 
       - name: Upload .s9pk
