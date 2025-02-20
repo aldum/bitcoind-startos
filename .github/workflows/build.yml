@@ -14,18 +14,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Prepare StartOS SDK
-        uses: Start9Labs/sdk@v1
+        uses: aldum/start-sdk-action@v1.3.3
 
       - name: Checkout services repository
         uses: actions/checkout@v4
         with:
-          submodules: "true"
+          submodules: recursive
 
       - name: Build the service package
         id: build
         run: |
           # git submodule update --init --recursive
-          start-sdk init
+          start-cli init
           npm i
           make
           PACKAGE_ID=$(sed -n -r -e 's/PACKAGE_ID := (.+)/\1/ p' Makefile)
