@@ -24,12 +24,12 @@ jobs:
       - name: Build the service package
         id: build
         run: |
-          # git submodule update --init --recursive
+          git submodule update --init --recursive
           start-cli init
           npm i
           npm run build
-          ls -lha
           echo '-------------------'
+          which docker
           make
           ls -lha
           PACKAGE_ID=$(sed -n -r -e 's/PACKAGE_ID := (.+)/\1/ p' Makefile)
