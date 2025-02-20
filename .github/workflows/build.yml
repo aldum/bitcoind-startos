@@ -27,7 +27,11 @@ jobs:
           # git submodule update --init --recursive
           start-cli init
           npm i
+          npm run build
+          ls -lha
+          echo '-------------------'
           make
+          ls -lha
           PACKAGE_ID=$(sed -n -r -e 's/PACKAGE_ID := (.+)/\1/ p' Makefile)
           echo "package_id=$PACKAGE_ID" >> $GITHUB_ENV
         shell: bash
