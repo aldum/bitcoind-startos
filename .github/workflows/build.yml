@@ -72,7 +72,7 @@ jobs:
       - name: Generate sha256 checksum
         run: |
           PACKAGE_ID=bitcoind
-          sha256sum ${PACKAGE_ID}.s9pk > ${PACKAGE_ID}.s9pk.sha256 || true
+          sha256sum ${PACKAGE_ID}.s9pk > ${PACKAGE_ID}.s9pk.sha256
         shell: bash
 
       - name: Create GitHub Release
@@ -81,7 +81,6 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: ${{ env.package_title }} ${{ github.ref_name }}
           prerelease: true
-          body_path: change-log.txt
           files: |
             ./bitcoind.s9pk
             ./bitcoind.s9pk.sha256
