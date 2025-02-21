@@ -19,6 +19,7 @@ jobs:
       - name: Checkout services repository
         uses: actions/checkout@v4
         with:
+          ref: update/036
           submodules: recursive
 
       - name: Build the service package
@@ -29,9 +30,6 @@ jobs:
           npm i
           npm run build
           sudo apt install -y squashfs-tools-ng
-          echo '-------------------'
-          docker run --privileged --rm tonistiigi/binfmt --install all
-          docker buildx create --use
           make
         shell: bash
 
