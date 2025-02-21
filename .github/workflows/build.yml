@@ -35,8 +35,10 @@ jobs:
       - name: Setting package ID and title from the manifest
         id: package
         run: |
-          echo "package_id=$(sed -n -r -e "s/\s*id\s*: '(.+)',/\1/ p" startos/manifest.ts)" >> $GITHUB_ENV
-          echo "package_title=\"$(sed -n -r -e "s/\s*title\s*: '(.+)',/\1/ p" startos/manifest.ts)\"" >> $GITHUB_ENV
+          PKGID="$(sed -n -r -e "s/\s*id\s*: '(.+)',/\1/ p" startos/manifest.ts)"
+          TITLE="$(sed -n -r -e "s/\s*title\s*: '(.+)',/\1/ p" startos/manifest.ts)"
+          echo "package_id=\"$PKGID\"" | tee -a $GITHUB_ENV $GITHUB_OUTPUT
+          echo "package_title=\"$TITLE\"" | tee -a $GITHUB_ENV $GITHUB_OUTPUT
         shell: bash
 
       - name: Upload .s9pk
@@ -50,10 +52,14 @@ jobs:
       id-token: write
       contents: write
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     needs:
       - BuildPackage
     steps:
+      - name: Set up env
+        run: |
+          echo "package_id=${{ needs.BuildPackage.outputs.package_id }}"    >> $GITHUB_ENV
+          echo "package_title=\"${{ needs.BuildPackage.outputs.package_title }}\"" >> $GITHUB_ENV
       - uses: actions/download-artifact@v4
         with:
           name: ${{ env.package_id }}.s9pk
