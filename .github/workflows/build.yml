@@ -67,7 +67,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: ${{ env.package_id }}.s9pk
-          path: ${{ env.package_id }}.s9pk
+          path: ./${{ env.package_id }}.s9pk
 
       - name: Generate sha256 checksum
         run: |
