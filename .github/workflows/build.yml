@@ -35,9 +35,8 @@ jobs:
       - name: Setting package ID and title from the manifest
         id: package
         run: |
-          cat startos/manifest.ts
-          echo "package_id=$(sed -n -r -e "s/\s*id\s*: '(.+)',/\1/ p" startos/manifest.ts) >> $GITHUB_ENV
-          echo "package_title=$(sed -n -r -e "s/\s*title\s*: '(.+)',/\1/ p" startos/manifest.ts)" >> $GITHUB_ENV
+          echo "package_id=$(sed -n -r -e "s/\s*id\s*: '(.+)',/\1/ p" startos/manifest.ts)" >> $GITHUB_ENV
+          echo "package_title=\"$(sed -n -r -e "s/\s*title\s*: '(.+)',/\1/ p" startos/manifest.ts)\"" >> $GITHUB_ENV
         shell: bash
 
       - name: Upload .s9pk
