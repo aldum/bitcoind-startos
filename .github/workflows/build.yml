@@ -67,12 +67,12 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: ${{ env.package_id }}.s9pk
-          path: ./${{ env.package_id }}.s9pk
+          path: ./
 
       - name: Generate sha256 checksum
         run: |
           PACKAGE_ID=bitcoind
-          sha256sum ${PACKAGE_ID}.s9pk > ${PACKAGE_ID}.s9pk.sha256
+          sha256sum ${PACKAGE_ID}.s9pk > ${PACKAGE_ID}.s9pk.sha256 || true
         shell: bash
 
       - name: Create GitHub Release
@@ -84,7 +84,7 @@ jobs:
           body_path: change-log.txt
           files: |
             ./bitcoind.s9pk
-            ./bitcoind.s9pk.sha256
+            # ./bitcoind.s9pk.sha256
 
       # - name: Publish to Registry
       #   env:
