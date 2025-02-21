@@ -12,6 +12,9 @@ on:
 jobs:
   BuildPackage:
     runs-on: ubuntu-latest
+    outputs:
+        package_id:    ${{ steps.save-out.outputs.package_id }}
+        package_title: ${{ steps.save-out.outputs.package_title }}
     steps:
       - name: Prepare StartOS SDK
         uses: aldum/start-sdk-action@v1.3.6
@@ -33,11 +36,11 @@ jobs:
         shell: bash
 
       - name: Setting package ID and title from the manifest
-        id: package
+        id: save-out
         run: |
           PKGID="$(sed -n -r -e "s/\s*id\s*: '(.+)',/\1/ p" startos/manifest.ts)"
           TITLE="$(sed -n -r -e "s/\s*title\s*: '(.+)',/\1/ p" startos/manifest.ts)"
-          echo "package_id=\"$PKGID\"" | tee -a $GITHUB_ENV $GITHUB_OUTPUT
+          echo "package_id=$PKGID" | tee -a $GITHUB_ENV $GITHUB_OUTPUT
           echo "package_title=\"$TITLE\"" | tee -a $GITHUB_ENV $GITHUB_OUTPUT
         shell: bash
 
@@ -58,21 +61,17 @@ jobs:
     steps:
       - name: Set up env
         run: |
-          echo ${{ needs.BuildPackage.outputs.package_id }}
-          echo "package_id=${{ needs.BuildPackage.outputs.package_id }}"    >> $GITHUB_ENV
+          echo "package_id=${{ needs.BuildPackage.outputs.package_id }}"           >> $GITHUB_ENV
           echo "package_title=\"${{ needs.BuildPackage.outputs.package_title }}\"" >> $GITHUB_ENV
 
       - uses: actions/download-artifact@v4
         with:
-          name: bitcoind.s9pk
-          path: bitcoind.s9pk
-          # name: ${{ env.package_id }}.s9pk
-          # path: ${{ env.package_id }}.s9pk
+          name: ${{ env.package_id }}.s9pk
+          path: ${{ env.package_id }}.s9pk
 
       - name: Generate sha256 checksum
         run: |
           PACKAGE_ID=bitcoind
-          # PACKAGE_ID=${{ env.package_id }}
           sha256sum ${PACKAGE_ID}.s9pk > ${PACKAGE_ID}.s9pk.sha256
         shell: bash
 
@@ -86,8 +85,6 @@ jobs:
           files: |
             ./bitcoind.s9pk
             ./bitcoind.s9pk.sha256
-            # ./${{ env.package_id }}.s9pk
-            # ./${{ env.package_id }}.s9pk.sha256
 
       # - name: Publish to Registry
       #   env:
