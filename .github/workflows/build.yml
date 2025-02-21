@@ -84,7 +84,7 @@ jobs:
           body_path: change-log.txt
           files: |
             ./bitcoind.s9pk
-            # ./bitcoind.s9pk.sha256
+            ./bitcoind.s9pk.sha256
 
       # - name: Publish to Registry
       #   env:
