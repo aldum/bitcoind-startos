@@ -44,3 +44,46 @@ jobs:
         with:
           name: ${{ env.package_id }}.s9pk
           path: ./${{ env.package_id }}.s9pk
+
+  ReleasePackage:
+    permissions:
+      id-token: write
+      contents: write
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    needs:
+      - BuildPackage
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.package_id }}.s9pk
+          path: ${{ env.package_id }}.s9pk
+
+      - name: Generate sha256 checksum
+        run: |
+          PACKAGE_ID=${{ env.package_id }}
+          sha256sum ${PACKAGE_ID}.s9pk > ${PACKAGE_ID}.s9pk.sha256
+        shell: bash
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ env.package_title }} ${{ github.ref_name }}
+          prerelease: true
+          body_path: change-log.txt
+          files: |
+            ./${{ env.package_id }}.s9pk
+            ./${{ env.package_id }}.s9pk.sha256
+
+      # - name: Publish to Registry
+      #   env:
+      #     S9USER: ${{ secrets.S9USER }}
+      #     S9PASS: ${{ secrets.S9PASS }}
+      #     S9REGISTRY: ${{ secrets.S9REGISTRY }}
+      #   run: |
+      #     if [[ -z "$S9USER" || -z "$S9PASS" || -z "$S9REGISTRY" ]]; then
+      #       echo "Publish skipped: missing registry credentials."
+      #     else
+      #       start-sdk publish https://$S9USER:$S9PASS@$S9REGISTRY ${{ env.package_id }}.s9pk
+      #     fi
