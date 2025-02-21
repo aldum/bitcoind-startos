@@ -58,17 +58,21 @@ jobs:
     steps:
       - name: Set up env
         run: |
+          echo ${{ needs.BuildPackage.outputs.package_id }}
           echo "package_id=${{ needs.BuildPackage.outputs.package_id }}"    >> $GITHUB_ENV
           echo "package_title=\"${{ needs.BuildPackage.outputs.package_title }}\"" >> $GITHUB_ENV
 
       - uses: actions/download-artifact@v4
         with:
-          name: ${{ env.package_id }}.s9pk
-          path: ${{ env.package_id }}.s9pk
+          name: bitcoind.s9pk
+          path: bitcoind.s9pk
+          # name: ${{ env.package_id }}.s9pk
+          # path: ${{ env.package_id }}.s9pk
 
       - name: Generate sha256 checksum
         run: |
-          PACKAGE_ID=${{ env.package_id }}
+          PACKAGE_ID=bitcoind
+          # PACKAGE_ID=${{ env.package_id }}
           sha256sum ${PACKAGE_ID}.s9pk > ${PACKAGE_ID}.s9pk.sha256
         shell: bash
 
@@ -80,8 +84,10 @@ jobs:
           prerelease: true
           body_path: change-log.txt
           files: |
-            ./${{ env.package_id }}.s9pk
-            ./${{ env.package_id }}.s9pk.sha256
+            ./bitcoind.s9pk
+            ./bitcoind.s9pk.sha256
+            # ./${{ env.package_id }}.s9pk
+            # ./${{ env.package_id }}.s9pk.sha256
 
       # - name: Publish to Registry
       #   env:
