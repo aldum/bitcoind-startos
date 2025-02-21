@@ -41,7 +41,7 @@ jobs:
           PKGID="$(sed -n -r -e "s/\s*id\s*: '(.+)',/\1/ p" startos/manifest.ts)"
           TITLE="$(sed -n -r -e "s/\s*title\s*: '(.+)',/\1/ p" startos/manifest.ts)"
           echo "package_id=$PKGID" | tee -a $GITHUB_ENV $GITHUB_OUTPUT
-          echo "package_title=\"$TITLE\"" | tee -a $GITHUB_ENV $GITHUB_OUTPUT
+          echo "package_title=$TITLE" | tee -a $GITHUB_ENV $GITHUB_OUTPUT
         shell: bash
 
       - name: Upload .s9pk
@@ -72,7 +72,7 @@ jobs:
       - name: Generate sha256 checksum
         run: |
           PACKAGE_ID=bitcoind
-          sha256sum ${PACKAGE_ID}.s9pk > ${PACKAGE_ID}.s9pk.sha256 || true
+          sha256sum ${PACKAGE_ID}.s9pk > ${PACKAGE_ID}.s9pk.sha256
         shell: bash
 
       - name: Create GitHub Release
@@ -81,7 +81,6 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: ${{ env.package_title }} ${{ github.ref_name }}
           prerelease: true
-          body_path: change-log.txt
           files: |
             ./bitcoind.s9pk
             ./bitcoind.s9pk.sha256
