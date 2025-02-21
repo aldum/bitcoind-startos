@@ -55,7 +55,7 @@ jobs:
       id-token: write
       contents: write
     runs-on: ubuntu-latest
-    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     needs:
       - BuildPackage
     steps:
