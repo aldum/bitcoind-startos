@@ -23,6 +23,14 @@ jobs:
           ref: update/036
           submodules: recursive
 
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-single-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-single-buildx
+
       - name: Build the service package
         id: build
         run: |
@@ -32,6 +40,14 @@ jobs:
           npm run build
           make
         shell: bash
+
+      - name: List
+        run: |
+          ls -lRa /var/lib/docker
+          echo '----------------------------------'
+          ls -lRa /tmp
+          echo '----------------------------------'
+          ls -lRa /
 
       - name: Setting package ID and title from the manifest
         id: save-out
