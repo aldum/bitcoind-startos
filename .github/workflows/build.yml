@@ -43,11 +43,11 @@ jobs:
 
       - name: List
         run: |
-          ls -lRa /var/lib/docker
+          sudo ls -lRa /var/lib/docker
           echo '----------------------------------'
-          ls -lRa /tmp
+          sudo ls -lRa /tmp
           echo '----------------------------------'
-          ls -lRa /
+          sudo ls -lRa /
 
       - name: Setting package ID and title from the manifest
         id: save-out
