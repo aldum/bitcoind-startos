@@ -2,6 +2,7 @@ import { MountOptions } from '@start9labs/start-sdk/package/lib/util/SubContaine
 import { bitcoinConfFile } from '../file-models/bitcoin.conf'
 import { sdk } from '../sdk'
 import { getRpcUsers } from '../utils'
+import { genPassword } from '../genpw'
 const { InputSpec, Value } = sdk
 
 export const inputSpec = InputSpec.of({
@@ -53,33 +54,30 @@ export const generateRpcUser = sdk.Action.withInput(
       }
     }
 
-    const res = await sdk.SubContainer.with(
-      effects,
-      {
-        imageId: 'python',
-      },
-      [
-        {
-          options: {
-            type: 'assets',
-            subpath: null,
-            id: 'rpcauth',
-          },
-          path: '/assets',
-        },
-      ],
-      'RPC Auth Generator',
-      (subc) =>
-        subc.exec([
-          'python3',
-          '/assets/rpcauth.py',
-          `"${input.username}"`,
-        ]),
-    )
-
-    if (typeof res.stdout === 'string') {
-      const password = res.stdout.split('\n')[3].trim()
-      const newRpcAuth = res.stdout.split('\n')[1].trim().split('=')[1].trim()
+    // const res = await sdk.SubContainer.with(
+    //   effects,
+    //   {
+    //     imageId: 'python',
+    //   },
+    //   [
+    //     {
+    //       options: {
+    //         type: 'assets',
+    //         subpath: null,
+    //         id: 'rpcauth',
+    //       },
+    //       path: '/assets',
+    //     },
+    //   ],
+    //   'RPC Auth Generator',
+    //   (subc) =>
+    //     subc.exec([
+    //       'python3',
+    //       '/assets/rpcauth.py',
+    //       `"${input.username}"`,
+    //     ]),
+    // )
+    const [password, newRpcAuth] = await genPassword(input.username)
 
       bitcoinConfFile.merge({
         rpcauth: [newRpcAuth],
@@ -99,6 +97,6 @@ export const generateRpcUser = sdk.Action.withInput(
           qr: false,
         },
       }
-    }
+
   },
 )
