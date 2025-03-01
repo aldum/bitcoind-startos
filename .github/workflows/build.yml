@@ -48,6 +48,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-single-buildx
 
+      - name: control
+        run: ls -lha /var/tmp/startos/buildx-cache
+
       - name: Build the service package
         id: build
         run: |
@@ -66,6 +69,9 @@ jobs:
           echo "package_id=$PKGID" | tee -a $GITHUB_ENV $GITHUB_OUTPUT
           echo "package_title=$TITLE" | tee -a $GITHUB_ENV $GITHUB_OUTPUT
         shell: bash
+
+      - name: control
+        run: ls -lhaR /var/tmp/startos/buildx-cache
 
       - name: Upload .s9pk
         uses: actions/upload-artifact@v4
