@@ -31,5 +31,9 @@ export const { packageInit, packageUninit, containerInit } = sdk.setupInit(
   setInterfaces,
   setDependencies,
   actions,
+  {
+    reindexBlockchain: false,
+    reindexChainstate: false
+  },
   exposedStore,
 )

@@ -35,7 +35,7 @@ export const runtimeInfo = sdk.Action.withoutInput(
         `-rpcport=${conf.prune ? 18332 : rpcPort}`,
         'getnetworkinfo',
       ],
-      { mounts: mainMounts.build() },
+      { mounts: mainMounts },
       'getnetworkinfo',
     )
 
@@ -55,7 +55,7 @@ export const runtimeInfo = sdk.Action.withoutInput(
         `-rpcport=${conf.prune ? 18332 : rpcPort}`,
         'getblockchaininfo',
       ],
-      { mounts: mainMounts.build() },
+      { mounts: mainMounts },
       'getblockchaininfo',
     )
 
