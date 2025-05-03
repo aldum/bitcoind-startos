@@ -29,7 +29,7 @@ RUN apk --no-cache add \
   sqlite-dev \
   zeromq-dev
 
-ADD ./bitcoin /bitcoin
+ADD ./knots /bitcoin
 
 ENV BITCOIN_PREFIX=/opt/bitcoin
 
@@ -37,7 +37,8 @@ WORKDIR /bitcoin
 
 RUN ./autogen.sh
 RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/include/ \
-  # If building on Mac make sure to increase Docker VM memory, or uncomment this line. See https://github.com/bitcoin/bitcoin/issues/6658 for more info.
+  # If building on Mac make sure to increase Docker VM memory, or uncomment this line.
+  # See https://github.com/bitcoin/bitcoin/issues/6658 for more info.
   # CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" \
   CXXFLAGS="-O1" \
   CXX=clang++ CC=clang \
@@ -63,7 +64,8 @@ LABEL maintainer.0="João Fonseca (@joaopaulofonseca)" \
   maintainer.2="Rui Marinho (@ruimarinho)" \
   maintainer.3="Aiden McClelland (@dr-bonez)"
 
-RUN sed -i 's/http\:\/\/dl-cdn.alpinelinux.org/https\:\/\/alpine.global.ssl.fastly.net/g' /etc/apk/repositories
+RUN sed -i 's/http\:\/\/dl-cdn.alpinelinux.org/https\:\/\/alpine.global.ssl.fastly.net/g' \
+      /etc/apk/repositories
 RUN apk --no-cache add \
   bash \
   curl \
