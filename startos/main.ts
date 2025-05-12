@@ -148,13 +148,13 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
           return res.exitCode === 0
             ? {
-                message: 'The Bitcoin RPC Interface is ready',
-                result: 'success',
-              }
+              message: 'The Bitcoin RPC Interface is ready',
+              result: 'success',
+            }
             : {
-                message: 'The Bitcoin RPC Interface is not ready',
-                result: 'starting',
-              }
+              message: 'The Bitcoin RPC Interface is not ready',
+              result: 'starting',
+            }
         },
       },
       requires: [],
