@@ -111,13 +111,13 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
             ])
             return res.exitCode === 0
               ? {
-                  message: 'The Bitcoin RPC Interface is ready',
-                  result: 'success',
-                }
+                message: 'The Bitcoin RPC Interface is ready',
+                result: 'success',
+              }
               : {
-                  message: 'The Bitcoin RPC Interface is not ready',
-                  result: 'starting',
-                }
+                message: 'The Bitcoin RPC Interface is not ready',
+                result: 'starting',
+              }
           } catch {
             console.log('Waiting for cookie to be created')
             return {
@@ -141,29 +141,15 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
             'getblockchaininfo',
           ])
 
-          if (
-            res.exitCode === 0 &&
-            res.stdout !== '' &&
-            typeof res.stdout === 'string'
-          ) {
-            const info: GetBlockchainInfo = JSON.parse(res.stdout)
-
-            if (info.initialblockdownload) {
-              const percentage = (info.verificationprogress * 100).toFixed(2)
-              return {
-                message: `Syncing blocks...${percentage}%`,
-                result: 'loading',
-              }
+          return res.exitCode === 0
+            ? {
+              message: 'The Bitcoin RPC Interface is ready',
+              result: 'success',
             }
-
-            return { message: 'Bitcoin is fully synced', result: 'success' }
-          }
-
-          if (res.stderr.includes('error code: -28')) {
-            return { message: 'Bitcoin is starting…', result: 'starting' }
-          } else {
-            return { message: res.stderr as string, result: 'failure' }
-          }
+            : {
+              message: 'The Bitcoin RPC Interface is not ready',
+              result: 'starting',
+            }
         },
       },
       requires: ['primary'],
@@ -200,16 +186,17 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     })
 
   if (conf.prune) {
+    const cookie_path = `${rootDir}/${bitcoinConfDefaults.rpccookiefile}`
     await configToml.write(effects, {
       bitcoind_address: '127.0.0.1',
       bitcoind_port: 18332,
       bind_address: '0.0.0.0',
       bind_port: rpcPort,
-      cookie_file: `${rootDir}/${bitcoinConfDefaults.rpccookiefile}`,
+      cookie_file: cookie_path,
       tor_proxy: `${osIp}:9050`,
       tor_only: conf.onlynet ? conf.onlynet.includes('onion') : false,
       passthrough_rpcauth: `${rootDir}/bitcoin.conf`,
-      passthrough_rpccookie: `${rootDir}/${bitcoinConfDefaults.rpccookiefile}`,
+      passthrough_rpccookie: cookie_path,
     })
 
     await promises.chmod(configToml.path, 0o600)
